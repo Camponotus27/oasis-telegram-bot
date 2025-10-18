@@ -1,19 +1,23 @@
 {
   "name": "oasis-telegram-bot",
-  "type": "module",
   "version": "1.0.0",
-  "main": "index.mjs",
+  "type": "module",
+  "private": true,
   "scripts": {
-    "start": "node index.mjs",
-    "dev": "nodemon index.js"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
-    "luxon": "^3.7.2",
+    "luxon": "^3.5.0",
     "telegraf": "^4.16.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^22.7.5",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
   }
 }
