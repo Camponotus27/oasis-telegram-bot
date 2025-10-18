@@ -108,6 +108,10 @@ function dayRangeUTC(dateStr?: string | null): [string, string] {
   ];
 }
 
+function m2oId(v: unknown): number | null {
+  return Array.isArray(v) ? (v[0] as number) : null;
+}
+
 /* =========================
    ODOO JSON-RPC (authenticate + execute_kw)
 ========================= */
@@ -217,7 +221,7 @@ async function createPurchaseRFQ(
   partner_id: number,
   product_id: number,
   qty: number,
-  uom_po?: [number, string] | null
+  uom_id?: number | null
 ) {
   const orderId = await odooExecuteKw<number>("purchase.order", "create", [
     {
@@ -231,7 +235,7 @@ async function createPurchaseRFQ(
       product_id,
       name: "Reposición vía Telegram",
       product_qty: qty,
-      product_uom: Array.isArray(uom_po) ? uom_po[0] : uom_po, // puede ser undefined/null; Odoo aplicará defaults
+      product_uom: uom_id ?? undefined, // ✅ nunca boolean
       price_unit: 0,
       date_planned: DateTime.now().toFormat("yyyy-LL-dd"),
     },
@@ -463,7 +467,7 @@ async function createRFQFlow(ctx: Context, st: SessionState) {
         fields: ["uom_po_id", "name"],
       }
     );
-    const uom_po = tmpl?.[0]?.uom_po_id ?? null;
+    const uomId: number | null = m2oId(tmpl?.[0]?.uom_po_id);
 
     const vendorId = await getFirstVendorForProductTemplate(product_tmpl_id);
     if (!vendorId) {
@@ -473,7 +477,7 @@ async function createRFQFlow(ctx: Context, st: SessionState) {
       );
     }
 
-    const poId = await createPurchaseRFQ(vendorId, product_id, qty, uom_po);
+    const poId = await createPurchaseRFQ(vendorId, product_id, qty, uomId);
 
     session.delete(ctx.from!.id);
     return ctx.reply(
