@@ -531,6 +531,14 @@ process.on("uncaughtException", (e) => {
       return next();
     });
 
+    // 💓 Heartbeat: muestra "alive" cada minuto para confirmar que el bot sigue activo
+    setInterval(() => {
+      const now = new Date().toLocaleString("es-CL", {
+        timeZone: "America/Santiago",
+      });
+      console.log(`💓 alive at ${now}`);
+    }, 60_000);
+
     await bot.launch({ dropPendingUpdates: false });
     console.log(
       "✅ Bot iniciado (long polling). Envíale /ping o /start por Telegram."
