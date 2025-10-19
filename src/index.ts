@@ -317,7 +317,13 @@ const session = new Map<number, SessionState>();
 const bot = new Telegraf(BOT_TOKEN);
 
 function isAllowed(ctx: Context): boolean {
-  return allowed.size === 0 || allowed.has(ctx.from!.id);
+  const isAllowed = allowed.size === 0 || allowed.has(ctx.from!.id);
+  console.log(
+    `"Revicion de autorizacion de ${ctx.from?.first_name} y ID ${
+      ctx.from?.id
+    } ${isAllowed ? "autorizado" : "NO autorizado"}"`
+  );
+  return isAllowed;
 }
 
 bot.start((ctx) => {
